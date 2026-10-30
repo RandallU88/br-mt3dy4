@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0E0F11">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Backroom</title>
+<link rel="icon" href="brand/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png">
+<link rel="icon" type="image/svg+xml" href="brand/favicon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Backroom">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div id="login" class="screen hidden">
+  <form id="loginForm" class="card" autocomplete="on">
+    <div class="wordmark"><img id="wordmark" src="brand/backroom-wordmark.svg" alt="Backroom" height="32"></div>
+    <p class="muted">Sign in with the account you were given.</p>
+    <label>Username<input id="email" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required></label>
+    <label>Password<input id="password" type="password" autocomplete="current-password" required></label>
+    <button type="submit" class="primary wide" id="loginBtn">Sign in</button>
+    <p id="loginErr" class="err" role="alert"></p>
+  </form>
+</div>
+<div id="app" class="hidden">
+  <aside id="sidebar">
+    <header class="bar">
+      <strong class="side-title"><img src="brand/backroom-mark.svg" alt="" class="side-mark">Chats</strong>
+      <div class="actions">
+        <button id="newDmBtn" class="icon" aria-label="New direct message" title="New direct message">+</button>
+        <button id="menuBtn" class="icon" aria-label="Menu" title="Menu">&#8943;</button>
+      </div>
+    </header>
+    <div id="menu" class="menu hidden">
+      <div id="meName" class="muted"></div>
+      <button id="renameBtn">Change my display name</button>
+      <button id="pwBtn">Change my password</button>
+      <button id="adminBtn" class="hidden">Admin</button>
+      <button id="logoutBtn">Log out</button>
+    </div>
+    <div class="search"><input id="search" type="search" placeholder="Search" aria-label="Search conversations" autocomplete="off"></div>
+    <ul id="convList"></ul>
+  </aside>
+  <main id="thread">
+    <header class="bar">
+      <button id="backBtn" class="icon back" aria-label="Back">&#8249;</button>
+      <div class="titles"><strong id="threadTitle"></strong><span id="threadSub" class="muted"></span></div>
+      <span class="spacer" aria-hidden="true"></span>
+    </header>
+    <div id="messages" aria-live="polite"></div>
+    <form id="composer">
+      <textarea id="input" rows="1" maxlength="2000" placeholder="Message" enterkeyhint="send"></textarea>
+      <button type="submit" id="sendBtn" aria-label="Send" disabled><span class="send-circle"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+    </form>
+  </main>
+</div>
+<div id="adminView" class="hidden" role="dialog" aria-label="Admin">
+  <header class="bar">
+    <button id="adminBack" class="icon back" aria-label="Close admin">&#8249;</button>
+    <div class="titles"><strong>Admin</strong><span id="adminCount" class="muted"></span></div>
+    <span class="spacer" aria-hidden="true"></span>
+  </header>
+  <div class="admin-body">
+    <section class="card admin-card">
+      <h2>Add a person</h2>
+      <form id="addForm" autocomplete="off">
+        <label>Username<input id="newUser" autocapitalize="none" autocorrect="off" spellcheck="false" required minlength="3" maxlength="20" pattern="[A-Za-z0-9._\-]{3,20}"></label>
+        <label>Password<span class="pwrow"><input id="newPw" type="password" autocomplete="new-password" required minlength="8"><button type="button" class="ghost" id="newPwToggle" aria-label="Show password">Show</button></span></label>
+        <label>Display name<input id="newName" maxlength="40" placeholder="Defaults to the username"></label>
+        <button type="submit" class="primary wide" id="addBtn">Add person</button>
+        <p id="addMsg" class="err" role="alert"></p>
+      </form>
+    </section>
+    <section class="card admin-card">
+      <h2>People</h2>
+      <ul id="userList"></ul>
+    </section>
+  </div>
+</div>
+<dialog id="pwDialog"><form id="pwForm" method="dialog" class="card">
+  <h2 id="pwTitle">Change my password</h2>
+  <span class="pwrow"><input id="pwInput" type="password" autocomplete="new-password" minlength="8" placeholder="New password (8+ characters)"><button type="button" class="ghost" id="pwToggle" aria-label="Show password">Show</button></span>
+  <p id="pwMsg" class="err" role="alert"></p>
+  <div class="row"><button value="cancel" formnovalidate>Cancel</button><button value="ok" class="primary" id="pwSave">Save</button></div></form></dialog>
+<dialog id="confirmDialog"><form method="dialog" class="card">
+  <h2>Remove person?</h2><p id="confirmText" class="muted"></p>
+  <div class="row"><button value="cancel">Cancel</button><button value="ok" class="danger" id="confirmOk">Remove</button></div></form></dialog>
+<dialog id="dmDialog"><form method="dialog" class="card">
+  <h2>New direct message</h2><ul id="memberList"></ul>
+  <button value="cancel">Cancel</button></form></dialog>
+<dialog id="nameDialog"><form id="nameForm" method="dialog" class="card">
+  <h2>Display name</h2><input id="nameInput" maxlength="40" required>
+  <div class="row"><button value="cancel" formnovalidate>Cancel</button><button value="ok" class="primary">Save</button></div></form></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script src="admin.js"></script>
+</body></html>
