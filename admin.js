@@ -54,7 +54,7 @@
     const list = $("userList"); list.replaceChildren(el("li", "muted", "Loading..."));
     try {
       const { users, count, cap } = await call("list");
-      $("adminCount").textContent = count + " of " + cap;
+      $("adminCount").textContent = count + " of " + cap + " people";
       $("addBtn").disabled = count >= cap;
       list.replaceChildren();
       users.forEach((u) => {
@@ -65,7 +65,7 @@
         const reset = el("button", null, "Reset password"); reset.type = "button"; reset.addEventListener("click", () => openPw(u.username));
         const ren = el("button", null, "Rename"); ren.type = "button"; ren.addEventListener("click", () => rename(u));
         btns.append(reset, ren);
-        if (u.id !== FC.me.id) { const rm = el("button", null, "Remove"); rm.type = "button"; rm.addEventListener("click", () => remove(u)); btns.append(rm); }
+        if (u.id !== FC.me.id) { const rm = el("button", "destructive", "Remove"); rm.type = "button"; rm.addEventListener("click", () => remove(u)); btns.append(rm); }
         li.dataset.username = u.username; li.append(info, btns); list.append(li);
       });
     } catch (err) { list.replaceChildren(el("li", "err", err.message)); }

@@ -16,6 +16,7 @@
   // Tell the service worker which conversation is on screen so it can skip notifying for it.
   function reportViewing() {
     const c = document.visibilityState === "visible" ? ((location.hash.match(/c=([0-9a-f-]{36})/) || [])[1] || null) : null;
+    if (c !== undefined && document.visibilityState === "visible" && "clearAppBadge" in navigator) navigator.clearAppBadge().catch(() => {});
     if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({ type: "viewing", conversation_id: c });
   }
   ["hashchange", "visibilitychange", "focus"].forEach((ev) => window.addEventListener(ev, reportViewing));

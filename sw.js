@@ -29,11 +29,13 @@ self.addEventListener("push", (event) => {
       data: { conversation_id: d.conversation_id || null, message_id: d.message_id || null },
     });
     if (onScreen) (await self.registration.getNotifications({ tag })).forEach((n) => n.close());
+    if (!onScreen && "setAppBadge" in self.navigator) { try { const n = (await self.registration.getNotifications()).length; await self.navigator.setAppBadge(n || 1); } catch (_) { /* unsupported */ } }
   })());
 });
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
+  if ("clearAppBadge" in self.navigator) self.registration.getNotifications().then((l) => l.length ? self.navigator.setAppBadge(l.length) : self.navigator.clearAppBadge()).catch(() => {});
   const cid = event.notification.data && event.notification.data.conversation_id;
   const target = new URL(cid ? "./#c=" + cid : "./", self.registration.scope).href;
   event.waitUntil((async () => {
