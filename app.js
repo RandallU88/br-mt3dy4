@@ -47,7 +47,7 @@
     $("meName").textContent = "Signed in as " + nameFor(me.id);
     const isAdmin = !!(profiles[me.id] && profiles[me.id].is_admin);
     $("adminBtn").classList.toggle("hidden", !isAdmin);
-    window.FC = { sb, me, isAdmin, reloadProfiles: async () => { await loadProfiles(); renderConvs(); setHeader(); } };
+    window.FC = { sb, me, isAdmin, openConv: (id) => { if (convs.some((c) => c.id === id)) openConv(id); else loadConvs().then(() => openConv(id)); }, reloadProfiles: async () => { await loadProfiles(); renderConvs(); setHeader(); } };
   }
 
   async function loadConvs() {
@@ -121,6 +121,7 @@
 
   async function openConv(id) {
     current = convs.find((c) => c.id === id); if (!current) return;
+    history.replaceState(null, "", "#c=" + id); if (window.BackroomPush) BackroomPush.reportViewing();
     setHeader();
     $("app").classList.add("in-thread"); renderConvs();
     const box = $("messages"); box.replaceChildren();
@@ -158,7 +159,9 @@
     show("app");
     try {
       await loadProfiles(); await loadConvs(); subscribe();
-      if (window.matchMedia("(min-width:760px)").matches) openConv(GENERAL);
+      const want = (location.hash.match(/c=([0-9a-f-]{36})/) || [])[1];
+      if (want && convs.some((c) => c.id === want)) openConv(want);
+      else if (window.matchMedia("(min-width:760px)").matches) openConv(GENERAL);
     } catch (err) { console.warn("load failed", err && err.message); }
   }
 
@@ -178,11 +181,11 @@
     if (error) { alert("Message not sent. Please try again."); return; }
     input.value = ""; autosize(); syncSend(); onNewMessage(data); input.focus();
   });
-  $("backBtn").addEventListener("click", () => { $("app").classList.remove("in-thread"); current = null; renderConvs(); });
+  $("backBtn").addEventListener("click", () => { $("app").classList.remove("in-thread"); current = null; history.replaceState(null, "", location.pathname + location.search); if (window.BackroomPush) BackroomPush.reportViewing(); renderConvs(); });
 
   $("menuBtn").addEventListener("click", (e) => { e.stopPropagation(); $("menu").classList.toggle("hidden"); });
   document.addEventListener("click", (e) => { if (!$("menu").contains(e.target)) $("menu").classList.add("hidden"); });
-  $("logoutBtn").addEventListener("click", () => sb.auth.signOut());
+  $("logoutBtn").addEventListener("click", async () => { try { if (window.BackroomPush) await window.BackroomPush.onLogout(); } catch (_) {} sb.auth.signOut(); });
 
   $("renameBtn").addEventListener("click", () => { $("menu").classList.add("hidden"); $("nameInput").value = nameFor(me.id); $("nameDialog").showModal(); });
   $("nameDialog").addEventListener("close", async () => {

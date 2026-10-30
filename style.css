@@ -95,3 +95,5 @@ button.danger{background:var(--err);border-color:var(--err);color:#fff;font-weig
 @media (min-width:760px){.admin-body{padding:24px}#adminView .back{display:flex}#adminView .titles{align-items:center;text-align:center}#adminView .spacer{display:block}}
 .wordmark{line-height:0}.wordmark img{height:32px;width:auto;display:block}
 .side-title{display:flex;align-items:center;gap:10px}.side-mark{width:20px;height:20px;flex:none}
+.switch{flex-direction:row;align-items:center;gap:10px;font-size:16px;color:var(--text);min-height:44px}
+.switch input{width:22px;height:22px;accent-color:var(--accent)}

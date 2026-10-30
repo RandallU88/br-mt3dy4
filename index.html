@@ -41,6 +41,7 @@
     <div id="menu" class="menu hidden">
       <div id="meName" class="muted"></div>
       <button id="renameBtn">Change my display name</button>
+      <button id="notifBtn">Notifications</button>
       <button id="pwBtn">Change my password</button>
       <button id="adminBtn" class="hidden">Admin</button>
       <button id="logoutBtn">Log out</button>
@@ -89,6 +90,15 @@
   <span class="pwrow"><input id="pwInput" type="password" autocomplete="new-password" minlength="8" placeholder="New password (8+ characters)"><button type="button" class="ghost" id="pwToggle" aria-label="Show password">Show</button></span>
   <p id="pwMsg" class="err" role="alert"></p>
   <div class="row"><button value="cancel" formnovalidate>Cancel</button><button value="ok" class="primary" id="pwSave">Save</button></div></form></dialog>
+<dialog id="notifDialog"><form method="dialog" class="card">
+  <h2>Notifications</h2>
+  <p>Status: <strong id="notifStatus">Off</strong></p>
+  <p id="notifHelp" class="muted"></p>
+  <button type="button" class="primary wide" id="notifEnable">Enable notifications</button>
+  <label class="switch"><input type="checkbox" id="muteGeneral"> Mute General</label>
+  <button type="button" id="notifDisable">Turn off on this device</button>
+  <p id="notifMsg" class="err" role="alert"></p>
+  <div class="row"><button value="close">Done</button></div></form></dialog>
 <dialog id="confirmDialog"><form method="dialog" class="card">
   <h2>Remove person?</h2><p id="confirmText" class="muted"></p>
   <div class="row"><button value="cancel">Cancel</button><button value="ok" class="danger" id="confirmOk">Remove</button></div></form></dialog>
@@ -102,4 +112,5 @@
 <script src="config.js"></script>
 <script src="app.js"></script>
 <script src="admin.js"></script>
+<script src="push.js"></script>
 </body></html>
