@@ -17,7 +17,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800&display=swap">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="tokens.css?v=4">
 </head><body>
 <div id="login" class="screen hidden">
   <form id="loginForm" class="card" autocomplete="on">
@@ -56,10 +57,25 @@
       <span class="spacer" aria-hidden="true"></span>
     </header>
     <div id="messages" aria-live="polite"></div>
-    <form id="composer">
-      <textarea id="input" rows="1" maxlength="2000" placeholder="Message" enterkeyhint="send"></textarea>
-      <button type="submit" id="sendBtn" aria-label="Send" disabled><span class="send-circle"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
-    </form>
+    <div id="compose">
+      <p id="composerErr" class="err" role="alert"></p>
+      <div id="photoToast" class="photo-toast hidden" role="alert">
+        <span class="photo-ico alert" aria-hidden="true"></span>
+        <p id="photoToastMsg"></p>
+        <button type="button" id="photoToastRetry">Try again</button>
+      </div>
+      <div id="photoPreview" class="hidden">
+        <img id="photoThumb" alt="Selected photo">
+        <div class="photo-info"><span class="photo-ico spinner hidden" id="photoPrep" aria-hidden="true"></span><span id="photoMeta" class="muted"></span></div>
+        <button type="button" id="photoClear" class="icon" aria-label="Remove photo"><span class="photo-ico close" aria-hidden="true"></span></button>
+      </div>
+      <form id="composer">
+        <input type="file" id="photoInput" accept="image/*" hidden>
+        <button type="button" id="photoBtn" class="icon" aria-label="Add a photo" title="Add a photo"><span class="photo-ico photo" aria-hidden="true"></span></button>
+        <textarea id="input" rows="1" maxlength="2000" placeholder="Message" enterkeyhint="send"></textarea>
+        <button type="submit" id="sendBtn" aria-label="Send" disabled><span class="send-circle"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      </form>
+    </div>
   </main>
 </div>
 <div id="adminView" class="hidden" role="dialog" aria-label="Admin">
@@ -108,9 +124,18 @@
 <dialog id="nameDialog"><form id="nameForm" method="dialog" class="card">
   <h2>Display name</h2><input id="nameInput" maxlength="40" required>
   <div class="row"><button value="cancel" formnovalidate>Cancel</button><button value="ok" class="primary">Save</button></div></form></dialog>
+<div id="lightbox" class="hidden" role="dialog" aria-modal="true" aria-label="Photo">
+  <div id="lightboxBg"></div>
+  <div id="lightboxStage"><img id="lightboxImg" alt="Photo"></div>
+  <header id="lightboxBar">
+    <button type="button" id="lightboxSave" class="icon" aria-label="Save photo"><span class="photo-ico download" aria-hidden="true"></span></button>
+    <div class="lightbox-titles"><strong id="lightboxName"></strong><span id="lightboxTime"></span></div>
+    <button type="button" id="lightboxClose" class="icon" aria-label="Close photo"><span class="photo-ico close" aria-hidden="true"></span></button>
+  </header>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
-<script src="config.js"></script>
-<script src="app.js"></script>
-<script src="admin.js"></script>
-<script src="push.js"></script>
+<script src="config.js?v=4"></script>
+<script src="app.js?v=4"></script>
+<script src="admin.js?v=4"></script>
+<script src="push.js?v=4"></script>
 </body></html>

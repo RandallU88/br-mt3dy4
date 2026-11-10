@@ -1,0 +1,57 @@
+/* Backroom photo sending. New tokens only.
+   Import after the app stylesheet. Reuse existing color, type, and focus tokens.
+   --err is included because style.css already references it but never defines it. */
+
+:root {
+  --err: #FF6B6B;
+
+  --photo-max-w: 260px;
+  --photo-max-w-desktop: 320px;
+  --photo-ratio-min: 0.8;     /* 4:5 portrait clamp */
+  --photo-ratio-max: 1.7778;  /* 16:9 landscape clamp */
+  --photo-radius: 18px;       /* same as .bubble */
+  --photo-radius-tight: 6px;  /* same as grouped bubble corners */
+  --photo-gap: 2px;           /* same as .msg.cont */
+  --photo-pad: 0;             /* photo is full-bleed inside the bubble */
+  --photo-caption-pad: 8px 12px 10px;
+  --photo-caption-size: 16px;
+  --photo-caption-line: 1.45;
+
+  --photo-chip-size: 56px;
+  --photo-chip-radius: 10px;  /* same as form controls */
+  --photo-chip-pad: 8px 12px 6px;
+  --photo-chip-gap: 10px;
+
+  --photo-btn-size: 44px;
+  --photo-icon-size: 22px;
+  --photo-icon-stroke: 2px;
+  --photo-press-scale: 0.96;
+  --photo-disabled-opacity: 0.45; /* same as button:disabled */
+
+  --photo-sending-scrim: rgba(0, 0, 0, 0.55);
+  --photo-ring-size: 36px;
+  --photo-ring-stroke: 2px;
+  --photo-ring-circ: 56.55;   /* 2 * pi * 9, for the 24-viewBox ring */
+  --photo-badge-size: 28px;
+  --photo-badge-inset: 8px;
+  --photo-badge-fg: #0E0F11;  /* not white: white on --err fails AA */
+
+  --photo-skeleton: #24262A;
+  --photo-skeleton-shine: rgba(237, 237, 239, 0.06);
+  --photo-blur: 16px;
+
+  --photo-viewer-bg: rgba(0, 0, 0, 0.96);
+  --photo-viewer-bar: rgba(23, 24, 27, 0.85); /* same idea as --head */
+  --photo-viewer-duration: 220ms;
+  --photo-viewer-fade: 180ms;
+  --photo-viewer-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --photo-zoom-max: 4;
+  --photo-zoom-double: 2;
+  --photo-dismiss-px: 80px;
+
+  --photo-toast-radius: 12px; /* same as .menu */
+  --photo-toast-pad: 12px 14px;
+  --photo-toast-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+  --photo-focus: 0 0 0 3px var(--ring);
+}
