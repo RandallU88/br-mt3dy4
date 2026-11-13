@@ -13,13 +13,24 @@
     });
   }
 
-  // Tell the service worker which conversation is on screen so it can skip notifying for it.
+  // Which conversation is on screen right now (null when hidden or on the list).
+  function viewingConv() { return document.visibilityState === "visible" ? ((location.hash.match(/c=([0-9a-f-]{36})/) || [])[1] || null) : null; }
+  // Tell the service worker and the server which conversation is on screen. The server skips pushes to people
+  // already looking at that conversation (iPhones ignore notification tags, so extra pushes pile up there).
+  let beat = null, lastSent = { c: undefined, at: 0 };
   function reportViewing() {
-    const c = document.visibilityState === "visible" ? ((location.hash.match(/c=([0-9a-f-]{36})/) || [])[1] || null) : null;
-    if (c !== undefined && document.visibilityState === "visible" && "clearAppBadge" in navigator) navigator.clearAppBadge().catch(() => {});
+    const c = viewingConv();
+    if (document.visibilityState === "visible" && "clearAppBadge" in navigator) navigator.clearAppBadge().catch(() => {});
     if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({ type: "viewing", conversation_id: c });
+    if (c && supported) getReg().then((r) => r.getNotifications({ tag: "conv-" + c })).then((l) => l.forEach((n) => n.close())).catch(() => {});
+    const now = Date.now();
+    if (window.FC && FC.sb && (c !== lastSent.c || now - lastSent.at > 15000)) {
+      lastSent = { c, at: now };
+      FC.sb.rpc("set_viewing", { p_conversation_id: c }).then(() => {}, () => {});
+    }
+    clearInterval(beat); beat = c ? setInterval(reportViewing, 20000) : null;
   }
-  ["hashchange", "visibilitychange", "focus"].forEach((ev) => window.addEventListener(ev, reportViewing));
+  ["hashchange", "focus", "pagehide"].forEach((ev) => window.addEventListener(ev, reportViewing));
   document.addEventListener("visibilitychange", reportViewing);
   if (navigator.serviceWorker) navigator.serviceWorker.addEventListener("controllerchange", reportViewing);
 
@@ -60,8 +71,7 @@
       const r = await getReg();
       let sub = await r.pushManager.getSubscription();
       if (!sub) sub = await r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(FC_CONFIG.vapidPublicKey) });
-      const { error } = await FC.sb.rpc("save_push_subscription", { p_endpoint: sub.endpoint, p_p256dh: bufToB64(sub.getKey("p256dh")), p_auth: bufToB64(sub.getKey("auth")), p_muted_general: $("muteGeneral").checked });
-      if (error) throw error;
+      await save(sub, $("muteGeneral").checked);
       await render();
     } catch (e) { $("notifMsg").textContent = "Could not turn on notifications. " + ((e && e.message) || ""); }
     finally { $("notifEnable").disabled = false; }
@@ -70,7 +80,7 @@
   async function disable() {
     try {
       const sub = await currentSub();
-      if (sub) { await FC.sb.from("push_subscriptions").delete().eq("endpoint", sub.endpoint); await sub.unsubscribe(); }
+      if (sub) await forget(sub);
     } catch (e) { $("notifMsg").textContent = "Could not turn off notifications."; }
     await render();
   }
@@ -83,7 +93,34 @@
     const { error } = await FC.sb.from("push_subscriptions").update({ muted_general: $("muteGeneral").checked }).eq("endpoint", sub.endpoint);
     if (error) $("notifMsg").textContent = "Could not save that setting.";
   });
+  // After sign-in: keep exactly one row for this device. Re-save the current subscription if the server lost it,
+  // and drop the row for an older endpoint this browser used before (endpoints can rotate).
+  const LAST = "backroom.pushEndpoint";
+  async function sync() {
+    try {
+      if (!supported || Notification.permission !== "granted" || !window.FC) return;
+      const sub = await currentSub(); const prev = localStorage.getItem(LAST);
+      if (prev && (!sub || prev !== sub.endpoint)) await FC.sb.from("push_subscriptions").delete().eq("endpoint", prev);
+      if (!sub) { localStorage.removeItem(LAST); return; }
+      if (!(await myRow(sub))) await save(sub, false);
+      localStorage.setItem(LAST, sub.endpoint);
+    } catch (e) { console.warn("push sync failed", e && e.message); }
+    reportViewing();
+  }
+  async function save(sub, muted) {
+    const { error } = await FC.sb.rpc("save_push_subscription", { p_endpoint: sub.endpoint, p_p256dh: bufToB64(sub.getKey("p256dh")), p_auth: bufToB64(sub.getKey("auth")), p_muted_general: muted });
+    if (error) throw error;
+    localStorage.setItem(LAST, sub.endpoint);
+  }
+  async function forget(sub) {
+    await FC.sb.from("push_subscriptions").delete().eq("endpoint", sub.endpoint); await sub.unsubscribe(); localStorage.removeItem(LAST);
+  }
+
   // Signing out stops notifications on this device so the next person here doesn't get someone else's.
-  async function onLogout() { const sub = await currentSub(); if (sub) { await FC.sb.from("push_subscriptions").delete().eq("endpoint", sub.endpoint); await sub.unsubscribe(); } }
-  window.BackroomPush = { render, onLogout, reportViewing };
+  async function onLogout() {
+    clearInterval(beat); beat = null;
+    if (window.FC) await FC.sb.rpc("set_viewing", { p_conversation_id: null }).then(() => {}, () => {});
+    const sub = await currentSub(); if (sub) await forget(sub);
+  }
+  window.BackroomPush = { render, onLogout, reportViewing, sync };
 })();

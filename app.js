@@ -359,6 +359,7 @@
     show("app");
     try {
       await loadProfiles(); await loadConvs(); subscribe();
+      if (window.BackroomPush) BackroomPush.sync();
       const want = (location.hash.match(/c=([0-9a-f-]{36})/) || [])[1];
       if (want && convs.some((c) => c.id === want)) openConv(want);
       else if (window.matchMedia("(min-width:760px)").matches) openConv(GENERAL);
@@ -681,7 +682,6 @@
     lightImg.style.width = box.width + "px"; lightImg.style.height = box.height + "px";
     lightImg.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + scale + ")";
   }
-  function resetZoom() { scale = 1; tx = 0; ty = 0; if (fitted) place(fitted); else lightImg.style.transform = ""; }
   function closeLightbox(immediate) {
     if (lightbox.classList.contains("hidden") || closing) return;
     closing = true;

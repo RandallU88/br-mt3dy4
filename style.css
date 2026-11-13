@@ -108,12 +108,12 @@ button.destructive:hover,button.destructive:active{background:rgba(255,107,107,.
 #composer{border-top:none;padding-top:6px}
 #composerErr{margin:0;padding:6px 16px 0;color:var(--err)}
 .photo-ico{width:var(--photo-icon-size);height:var(--photo-icon-size);background:currentColor;display:block;flex:none;-webkit-mask:var(--photo-ico) center/contain no-repeat;mask:var(--photo-ico) center/contain no-repeat}
-.photo-ico.photo{--photo-ico:url("icons/photo.svg?v=4")}
-.photo-ico.close{--photo-ico:url("icons/close.svg?v=4")}
-.photo-ico.download{--photo-ico:url("icons/download.svg?v=4")}
-.photo-ico.retry{--photo-ico:url("icons/retry.svg?v=4")}
-.photo-ico.alert{--photo-ico:url("icons/alert.svg?v=4")}
-.photo-ico.spinner{--photo-ico:url("icons/spinner.svg?v=4");animation:photo-spin 800ms linear infinite}
+.photo-ico.photo{--photo-ico:url("icons/photo.svg?v=5")}
+.photo-ico.close{--photo-ico:url("icons/close.svg?v=5")}
+.photo-ico.download{--photo-ico:url("icons/download.svg?v=5")}
+.photo-ico.retry{--photo-ico:url("icons/retry.svg?v=5")}
+.photo-ico.alert{--photo-ico:url("icons/alert.svg?v=5")}
+.photo-ico.spinner{--photo-ico:url("icons/spinner.svg?v=5");animation:photo-spin 800ms linear infinite}
 @keyframes photo-spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){
   .photo-ico.spinner{animation:none;opacity:1}
@@ -158,7 +158,7 @@ button.destructive:hover,button.destructive:active{background:rgba(255,107,107,.
 .photo-ring-wrap{width:44px;height:44px;display:grid;place-items:center;position:relative;padding:0;border:none;background:transparent;color:#2DD4BF;min-height:0;pointer-events:auto;z-index:4}
 .photo-ring-wrap:focus-visible{outline:none;box-shadow:var(--photo-focus);border-radius:50%}
 .photo-ring-wrap svg{width:36px;height:36px;display:block;overflow:visible}
-.photo-cancel-x{position:absolute;width:16px;height:16px;background:#fff;pointer-events:none;-webkit-mask:url("icons/close.svg?v=4") center/contain no-repeat;mask:url("icons/close.svg?v=4") center/contain no-repeat}
+.photo-cancel-x{position:absolute;width:16px;height:16px;background:#fff;pointer-events:none;-webkit-mask:url("icons/close.svg?v=5") center/contain no-repeat;mask:url("icons/close.svg?v=5") center/contain no-repeat}
 .photo-badge{position:absolute;right:var(--photo-badge-inset);bottom:var(--photo-badge-inset);width:44px;height:44px;min-width:44px;padding:0;border:none;background:transparent;display:grid;place-items:center;z-index:2}
 .photo-badge:focus-visible{outline:none}
 .photo-badge:focus-visible .photo-badge-disc{box-shadow:var(--photo-focus)}
